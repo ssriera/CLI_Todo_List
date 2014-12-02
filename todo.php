@@ -20,10 +20,10 @@ function sort_menu($sorted_items, $sort_choice) {
         echo '$items';
     } elseif ($sort_choice == 'R') {
         krsort($items);
-    }
+    } 
+    return $sorted_items;
 }
 
-sort_menu(1,2);
 
  // List array items formatted for CLI
  function listItems($list) {
@@ -32,15 +32,6 @@ sort_menu(1,2);
         $say .= "[$key] is to take care of $value" . PHP_EOL;
     } return $say;
  }
-
-  // Return string of list items separated by newlines.
-     // Should be listed [KEY] Value like this:
-     // [1] TODO item 1
-     // [2] TODO item 2 - blah
-     // DO NOT USE ECHO, USE RETURN
-
- // Get STDIN, strip whitespace and newlines,
- // and convert to uppercase if $upper is true
 
  function getInput($upper = false) {
     
@@ -52,6 +43,16 @@ sort_menu(1,2);
     
     // Return filtered STDIN input
     return $input;
+ }
+
+ function addItem($newitem, $array){
+    $b_or_e = getInput(1);
+    if ($b_or_e == 'B') {
+        array_unshift($array, $newitem);
+    } else {
+        array_push($array, $newitem);
+    }
+    return $array;
  }
 
  // The loop!
@@ -68,10 +69,11 @@ sort_menu(1,2);
 
      // Check for actionable input
      if ($input == 'N') {
-         // Ask for entry
          echo 'Enter item: ';
          // Add entry to list array
-         $items[] = getInput();
+        $newitem = getInput();
+            echo 'Do you want the item to be added at the begining or the end of the list? B/E';
+         $items = addItem($newitem, $items);
      } elseif ($input == 'R') {
          // Remove which item?
          echo 'Enter item number to remove: ';
@@ -80,12 +82,14 @@ sort_menu(1,2);
          $key--;
          // Remove from array
          unset($items[$key]);
+         $items = array_values($items);
      } elseif ($input == 'S') {
         echo "Please make a selection: 'A' for Alphabetical,'Z' for Reverse Alphabetical,'O' for Order Entered,'R' for Reverse Order Entered";
         // capture user choice
         $sort_choice = getInput(true);
         // pass that choice, and our data to sort, into our function
-        sort_menu($items, $sort_choice);
+        $items = sort_menu($items, $sort_choice);
+
      }
 
  // Exit when input is (Q)uit
