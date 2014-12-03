@@ -11,6 +11,7 @@ When a sort type is selected, order the TODO list accordingly and display the re
  $items = array('cook', 'clean', 'dog');
  $sorted_items = $items;
 
+
 function sort_menu($sorted_items, $sort_choice) {
     if ($sort_choice == 'A') {
         asort($sorted_items);
@@ -55,34 +56,47 @@ function sort_menu($sorted_items, $sort_choice) {
     return $array;
  }
 
+ function openfile($filename) {
+    $handle = fopen($filename, 'r');
+    $contents = fread($handle, filesize($filename));
+    $contentsarray = explode("\n", $contents);
+    fclose($handle);
+    return $contentsarray;
+ }
+
  // The loop!
  do {
      // Echo the list produced by the function
      echo listItems($items);
 
      // Show the menu options
-     echo '(N)ew item, (R)emove item, (S)ort items, (Q)uit : ';
+     echo '(N)ew item, (O)pen file, (R)emove item, (S)ort items, (Q)uit: ';
 
      // Get the input from user
      // Use trim() to remove whitespace and newlines
      $input = getInput(true);
 
      // Check for actionable input
-     if ($input == 'N') {
+    if ($input == 'N') {
          echo 'Enter item: ';
          // Add entry to list array
         $newitem = getInput();
             echo 'Do you want the item to be added at the begining or the end of the list? B/E';
-         $items = addItem($newitem, $items);
-     } elseif ($input == 'R') {
-         // Remove which item?
-         echo 'Enter item number to remove: ';
-         // Get array key
-         $key = getInput();
-         $key--;
-         // Remove from array
-         unset($items[$key]);
-         $items = array_values($items);
+ //REVIEW !!!! scope?!
+        $items = addItem($newitem, $items);
+    } elseif ($input == 'O') {
+        $filename = getInput();
+        $contentsarray = openfile($filename);
+        $items = array_merge($items, $contentsarray);
+    } elseif ($input == 'R') {
+        // Remove which item?
+        echo 'Enter item number to remove: ';
+     // Get array key
+        $key = getInput();
+        $key--;
+        // Remove from array
+        unset($items[$key]);
+        $items = array_values($items);
      } elseif ($input == 'S') {
         echo "Please make a selection: 'A' for Alphabetical,'Z' for Reverse Alphabetical,'O' for Order Entered,'R' for Reverse Order Entered";
         // capture user choice
