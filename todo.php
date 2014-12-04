@@ -21,6 +21,8 @@ function sort_menu($sorted_items, $sort_choice) {
         echo '$items';
     } elseif ($sort_choice == 'R') {
         krsort($items);
+    } elseif ($sort_choice == 'A') {
+        echo '$items';
     } 
     return $sorted_items;
 }
@@ -28,6 +30,7 @@ function sort_menu($sorted_items, $sort_choice) {
 
  // List array items formatted for CLI
  function listItems($list) {
+    $say = '';
      foreach ($list as $key => $value) {
         $key++;
         $say .= "[$key] is to take care of $value" . PHP_EOL;
@@ -64,13 +67,39 @@ function sort_menu($sorted_items, $sort_choice) {
     return $contentsarray;
  }
 
+ function savefile($filename, $array) {
+    $handle = fopen($filename, 'w');
+        foreach ($array as $item) {
+            fwrite($handle, $item . PHP_EOL);
+        }
+    fclose($handle);
+    echo "The save was successful.\n";
+ }
+
+ function doesitexist($filename) {
+    while (file_exists($filename)) {
+        echo "This file exits already, do you still want to override? Y/N\n";
+        $input = getInput(true);
+        if (($input) == 'N') {
+            echo 'Enter new file name ';
+            $filename = getInput();
+
+        } elseif (($input) == 'Y') {
+            return $filename;   
+        } 
+    }
+    return $filename;
+ }
+
+
+
  // The loop!
  do {
      // Echo the list produced by the function
      echo listItems($items);
 
      // Show the menu options
-     echo '(N)ew item, (O)pen file, (R)emove item, (S)ort items, (Q)uit: ';
+     echo 'S(A)ve file, (N)ew item, (O)pen file, (R)emove item, (S)ort items, (Q)uit: ';
 
      // Get the input from user
      // Use trim() to remove whitespace and newlines
@@ -103,7 +132,10 @@ function sort_menu($sorted_items, $sort_choice) {
         $sort_choice = getInput(true);
         // pass that choice, and our data to sort, into our function
         $items = sort_menu($items, $sort_choice);
-
+     } elseif ($input == 'A') {
+        $filename = getInput();
+        doesitexist();
+        
      }
 
  // Exit when input is (Q)uit
